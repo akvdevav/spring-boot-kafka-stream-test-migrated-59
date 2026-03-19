@@ -9,10 +9,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.integration.annotation.InboundChannelAdapter;
 import org.springframework.integration.annotation.Poller;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -26,7 +22,6 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 @SpringBootApplication
-@EnableBinding(Processor.class)
 public class Application {
 
 	public static void main(String[] args) {
@@ -40,15 +35,15 @@ public class Application {
 
 	@Bean
 	public Queue wordsQueue() {
-		return new Queue("words", true);
+		return new org.springframework.amqp.rabbit.annotation.Queue("words", true);
 	}
 
 	@Bean
 	public Queue wordCountersQueue() {
-		return new Queue("word-counters", true);
+		return new org.springframework.amqp.rabbit.annotation.Queue("word-counters", true);
 	}
 
-	@RabbitListener(queuesToDeclare = @Queue(name = "words", durable = "true"))
+	@RabbitListener(queuesToDeclare = @org.springframework.amqp.rabbit.annotation.Queue(name = "words", durable = "true"))
 	public void processWord(@Payload String word) {
 		String[] words = word.split(" ");
 		for (String w : words) {
