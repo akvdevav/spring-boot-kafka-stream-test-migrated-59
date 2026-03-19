@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.integration.annotation.InboundChannelAdapter;
 import org.springframework.integration.annotation.Poller;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -35,15 +36,15 @@ public class Application {
 
 	@Bean
 	public Queue wordsQueue() {
-		return new org.springframework.amqp.rabbit.annotation.Queue("words", true);
+		return new Queue("words", true);
 	}
 
 	@Bean
 	public Queue wordCountersQueue() {
-		return new org.springframework.amqp.rabbit.annotation.Queue("word-counters", true);
+		return new Queue("word-counters", true);
 	}
 
-	@RabbitListener(queuesToDeclare = @org.springframework.amqp.rabbit.annotation.Queue(name = "words", durable = "true"))
+	@RabbitListener(queues = "words")
 	public void processWord(@Payload String word) {
 		String[] words = word.split(" ");
 		for (String w : words) {
